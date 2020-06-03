@@ -17,6 +17,9 @@ boxm_covariance_matrizes <- BoxM(banco_variaveis_ln[, 2:12],
                                  banco_variaveis_ln$Zona)
 
 
+MVTests::Bsper(data = banco_variaveis_ln %>% select_if(is.numeric))
+
+
 # Como 0.0001 é menor que o nível de significância de 5%, então
 # rejeitamos H0. Logo, as matrizes de covariância não são homogêneas
 
@@ -55,6 +58,7 @@ anova1 <- aov(Cota + Profundidade + Temperatura + Fosforo_total +
                 Clorofila + Transparencia + Turbidez + STS +
                 Oxigênio_dissolvido + Ortofosfato + Amonia ~ Zona - 1,
               data = banco_variaveis_ln)
+
 
 #--- Sumário da ANOVA com o p-valor
 
@@ -114,3 +118,22 @@ teste_tukey_anova1$Zona %>%
         legend.title = element_text(size = 14, colour = "black",
                                     face = "bold"),
         legend.text = element_text(size = 12, colour = "black"))
+
+
+
+
+
+#---------------- MANOVA
+
+
+
+manova1 <- manova(cbind(Cota , Profundidade , Temperatura , Fosforo_total ,
+                      Clorofila , Transparencia , Turbidez , STS ,
+                      Oxigênio_dissolvido , Ortofosfato , Amonia) ~ Zona,
+       data = banco_variaveis_ln)
+
+
+
+summary(manova1, test = "Auh")
+summary(manova1, test = "Pillai")
+

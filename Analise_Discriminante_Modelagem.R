@@ -58,6 +58,9 @@ ggplotLDAPrep(x = modelo_lda) %>%
                          ifelse(labels == 2, "Transição",
                                 "Lacustre"))) %>%
   magrittr::set_colnames(c("LD1", "LD2", "Zona")) %>%
+  mutate(Zona = factor(x = Zona, levels = c("Fluvial",
+                                            "Transição",
+                                            "Lacustre"))) %>%
   ggplot(data = ., aes(x = LD1, y = LD2, color = Zona, shape = Zona)) +
   geom_point(size = 2.5) +
   stat_ellipse(aes(x = LD1, y = LD2, fill = Zona), alpha = 0.2,
@@ -80,7 +83,7 @@ ggplotLDAPrep(x = modelo_lda) %>%
 
 
 
-ggsave(filename = "Gráficos/LDA_Modelo.pdf", device = "pdf",
+ggsave(filename = "Gráficos/LDA_Modelo1.pdf", device = "pdf",
        width = 11.57, height = 6, units = "in", dpi = "retina")
 
 

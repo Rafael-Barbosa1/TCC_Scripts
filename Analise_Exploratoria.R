@@ -175,7 +175,7 @@ banco %>%
 
 
 
-ggsave(filename = "Gráficos/Boxplot.pdf", device = "pdf", width = 11.57,
+ggsave(filename = "Gráficos/Boxplot1.pdf", device = "pdf", width = 11.57,
        height = 6, units = "in", dpi = "retina")
 
 

@@ -147,13 +147,20 @@ banco %>%
   glimpse
 
 
-#--- Manuseio do banco (Zona --> 1: Fluvial, 2: Transição, 3: Lacustre)
+#--- Manuseio do banco (Zona --> 0: Lacustre, 1: Transição, 2: Fluvial)
 
 
 banco <-
   banco %>%
-  mutate(Zona = factor(x = Zona,  labels = c("Fluvial", "Transição",
-                                             "Lacustre")))
+  mutate(Zona = case_when(Zona == 0 ~ "Lacustre",
+                          Zona == 1 ~ "Transição",
+                          Zona == 2 ~ "Fluvial")) %>%
+  mutate(Zona = factor(x = Zona, levels = c("Fluvial",
+                                            "Transição",
+                                            "Lacustre")))
+
+
+#--- 1: Fluvial, 2: Lacustre e 3: Transição
 
 
 banco_variaveis <-

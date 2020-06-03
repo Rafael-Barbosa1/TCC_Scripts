@@ -14,11 +14,11 @@ set.seed(19)
 index1 <- createDataPartition(y = banco_variaveis$Zona, p = 0.7,
                               list = F)
 
-treino1 <- banco_variaveis[index1, ]
+treino1 <- banco_variaveis[index1, -1]
 
 treino_label1 <- banco_variaveis[index1, 1]
 
-teste1 <- banco_variaveis[-index1, ]
+teste1 <- banco_variaveis[-index1, -1]
 
 teste_label1 <- banco_variaveis[-index1, 1]
 
@@ -30,14 +30,31 @@ type_predito <- NULL
 taxa_erro <- NULL
 
 
-for (i in 1:20) {
+for (i in 1:50) {
   type_predito <- knn(train = treino1, test = teste1,
                       cl = treino_label1, k = i)
-  taxa_erro[i] <- mean(type_predito != teste1$Zona)
+  taxa_erro[i] <- mean(type_predito != teste_label1)
+
 }
 
 
-erro_knn <- data.frame(k = 1:20, error.type = taxa_erro*100)
+
+
+erro_knn <- data.frame(k = 1:50, error.type = taxa_erro*100)
+
+menor_k <-
+  erro_knn %>%
+  arrange(error.type) %>%
+  head(1) %>%
+  select(k) %>%
+  as.numeric()
+
+menor_erro <-
+  erro_knn %>%
+  arrange(error.type) %>%
+  head(1) %>%
+  select(error.type) %>%
+  as.numeric
 
 
 
@@ -58,11 +75,13 @@ ggplot(data = erro_knn, aes(k, error.type))+
                                     face = "bold"),
         legend.text = element_text(size = 12, colour = "black")) +
   scale_y_continuous(labels = formato_real_graf) +
-  scale_x_continuous(breaks = seq(0, 20, 2))
+  scale_x_continuous(breaks = seq(0, 50, 2))
 
 
+cat("O menor erro atingido foi de", menor_erro, "com k =", menor_k)
 
-ggsave(filename = "Gráficos/Melhork_KNN.pdf", device = "pdf",
+
+ggsave(filename = "Gráficos/Melhork_KNN1.pdf", device = "pdf",
        width = 11.57, height = 6, units = "in", dpi = "retina")
 
 
@@ -70,54 +89,11 @@ ggsave(filename = "Gráficos/Melhork_KNN.pdf", device = "pdf",
 
 
 modelo_knn <- knn(train = treino1, test = teste1, cl = treino_label1,
-                  k = 7)
+                  k = 33)
 
 
 
 #--- Matriz de confusão
 
 
-confusionMatrix(modelo_knn, teste1$Zona)
-
-
-
-
-
-#---------------
-
-
-index2 <- createDataPartition(y = banco_variaveis$Zona, p = 0.7,
-                              list = F)
-
-treino2 <- banco_variaveis[index2, ]
-teste2 <- banco_variaveis[-index2, ]
-
-
-trctrl <- trainControl(method = 'repeatedcv', number = 10, repeats = 3)
-
-
-tuneGrid <- expand.grid(kmax = 1:20,            # allows to test a range of k values
-                        distance = 1:20,        # allows to test a range of distance values
-                        kernel = c('gaussian',  # different weighting types in kknn
-                                   'triangular',
-                                   'rectangular',
-                                   'epanechnikov',
-                                   'optimal'))
-
-
-x <- train(Zona ~ .,
-           data = treino2,
-           method = 'kknn',
-           trControl = trctrl,
-           preProcess = c('center', 'scale'),
-           tuneGrid = tuneGrid,
-           tuneLength = 10)
-x
-
-
-y <- predict(object = x, newdata = teste2)
-
-confusionMatrix(y, teste2$Zona)
-
-
-sum(z$table)
+confusionMatrix(modelo_knn, teste_label1)

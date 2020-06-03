@@ -35,3 +35,7 @@ prop_zonas_teste <-
 #cbind(prop_zonas_treino, prop_zonas_teste) %>%
 #  write.xlsx(x = ., file = "Tabelas/Proporc_Zonas_TesteXTreino.xlsx")
 
+
+
+prop_zonas_treino
+prop_zonas_teste
